@@ -1,29 +1,11 @@
-#include <QApplication>
-#include <QTextEdit>
-#include <QtGui>
-
-
-class Notepad : public QWidget
-{
-   
-public:
-    Notepad();
-         
-private slots:
-    void quit();
-
-private:
-    QTextEdit *textEdit;
-    QPushButton *btnOk;
-    
-};
+#include "QtTextEditor.h"
 
 Notepad::Notepad()
 {
     textEdit = new QTextEdit;
-    btnOk = new QPushButton("Quit");
+    btnOk = new QPushButton("Connect");
 
-    connect(btnOk, SIGNAL(clicked()), qApp, SLOT(quit()));
+    QObject::connect(btnOk, SIGNAL(clicked()), this, SLOT(connectDatabase()));
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(textEdit);
@@ -34,10 +16,23 @@ Notepad::Notepad()
 
 };
 
-void Notepad::quit()
+void Notepad::connectDatabase()
 {
-    qApp->quit();
-}
+//    
+     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+     db.setHostName("localhost");
+     db.setDatabaseName("distcentre");
+     db.setUserName("root");
+     db.setPassword("adminadmin");
+     bool ok = db.open();
+     if(ok)
+     {
+         qDebug() << "DB is connected";
+     }else {
+         qDebug() << "DB connection error";
+         qApp->quit();
+     }
+};
 
 int main(int argv, char **args)
 {
